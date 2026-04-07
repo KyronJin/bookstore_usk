@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login - PustakaBiru')
+@section('title', 'Login - JeBook')
 
 @section('content')
 <div class="bg-gray-50 min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -8,7 +8,7 @@
         <div class="bg-primary text-center py-8">
             <i class="fa-solid fa-book-open text-4xl text-white mb-3"></i>
             <h2 class="text-3xl font-extrabold text-white">Selamat Datang</h2>
-            <p class="mt-2 text-blue-200 text-sm">Masuk untuk melanjutkan ke PustakaBiru</p>
+            <p class="mt-2 text-blue-200 text-sm">Masuk untuk melanjutkan ke JeBook</p>
         </div>
         <div class="p-8">
             @if($errors->any())
@@ -74,7 +74,7 @@
             <!-- Info akun demo -->
             <div class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
                 <p class="text-xs text-blue-600 font-semibold mb-2"><i class="fa-solid fa-circle-info mr-1"></i> Akun Demo:</p>
-                <p class="text-xs text-blue-500">Admin: <strong>admin@pustakabiru.com</strong> / <strong>admin123</strong></p>
+                <p class="text-xs text-blue-500">Admin: <strong>admin@JeBook.com</strong> / <strong>admin123</strong></p>
                 <p class="text-xs text-blue-500">User: <strong>budi@gmail.com</strong> / <strong>user123</strong></p>
             </div>
         </div>

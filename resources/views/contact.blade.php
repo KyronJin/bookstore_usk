@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Hubungi Admin - PustakaBiru')
+@section('title', 'Hubungi Admin - JeBook')
 
 @section('content')
 <div class="bg-gray-50 py-12">
@@ -38,7 +38,7 @@
                                 <i class="fa-solid fa-envelope mt-1 w-6 text-accent"></i>
                                 <div>
                                     <p class="font-semibold text-lg">Email</p>
-                                    <p class="text-blue-100 text-sm mt-1">support@pustakabiru.com</p>
+                                    <p class="text-blue-100 text-sm mt-1">support@JeBook.com</p>
                                 </div>
                             </li>
                         </ul>
@@ -70,16 +70,16 @@
                     </div>
                     @endif
 
-                    <form action="{{ route('contact.store') }}" method="POST" class="space-y-5">
+                    <form action="{{ route('contact.store') }}" method="POST" class="space-y-5" id="contactForm">
                         @csrf
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                            <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="John Doe" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-secondary focus:border-secondary transition @error('name') border-red-500 @enderror" required>
+                            <input type="text" id="name" name="name" value="{{ old('name', auth()->check() ? auth()->user()->name : '') }}" placeholder="John Doe" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-secondary focus:border-secondary transition @error('name') border-red-500 @enderror" required @auth readonly @endauth>
                             @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
-                            <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="john@example.com" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-secondary focus:border-secondary transition @error('email') border-red-500 @enderror" required>
+                            <input type="email" id="email" name="email" value="{{ old('email', auth()->check() ? auth()->user()->email : '') }}" placeholder="john@example.com" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-secondary focus:border-secondary transition @error('email') border-red-500 @enderror" required @auth readonly @endauth>
                             @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
@@ -101,4 +101,31 @@
         </div>
     </div>
 </div>
+
+@guest
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('contactForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Harap Login',
+                    text: 'Silakan login terlebih dahulu untuk mengirim pesan.',
+                    confirmButtonText: 'Pergi ke Login',
+                    confirmButtonColor: '#1E3A8A',
+                    showCancelButton: true,
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('login') }}";
+                    }
+                });
+            });
+        }
+    });
+</script>
+@endguest
+
 @endsection

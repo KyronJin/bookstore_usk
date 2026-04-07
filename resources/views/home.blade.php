@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'PustakaBiru - Toko Buku Online Terpercaya')
+@section('title', 'JeBook - Toko Buku Online Terpercaya')
 
 @section('content')
 
@@ -166,7 +166,7 @@
 <section class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-dark mb-3">Mengapa Pilih PustakaBiru?</h2>
+            <h2 class="text-3xl font-bold text-dark mb-3">Mengapa Pilih JeBook?</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="text-center group">

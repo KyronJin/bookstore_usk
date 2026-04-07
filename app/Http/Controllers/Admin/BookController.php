@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
+    // Menampilkan halaman daftar semua buku beserta filternya
     public function index(Request $request)
     {
         $categories = Category::all();
@@ -30,6 +31,7 @@ class BookController extends Controller
         return view('admin.books', compact('books', 'categories'));
     }
 
+    // Menyimpan data buku baru ke database
     public function store(Request $request)
     {
         $request->validate([
@@ -52,6 +54,7 @@ class BookController extends Controller
         return back()->with('success', 'Buku "' . $request->title . '" berhasil ditambahkan.');
     }
 
+    // Memperbarui informasi buku yang sudah ada
     public function update(Request $request, Book $book)
     {
         $request->validate([
@@ -74,6 +77,7 @@ class BookController extends Controller
         return back()->with('success', 'Buku berhasil diperbarui.');
     }
 
+    // Menghapus buku dari basis data
     public function destroy(Book $book)
     {
         $title = $book->title;

@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Tentang Kami - PustakaBiru')
+@section('title', 'Tentang Kami - JeBook')
 
 @section('content')
 <div class="bg-gray-50 py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <h1 class="text-4xl font-bold text-primary mb-4">Tentang PustakaBiru</h1>
+            <h1 class="text-4xl font-bold text-primary mb-4">Tentang JeBook</h1>
             <p class="text-lg text-gray-600">
-                PustakaBiru adalah destinasi utama bagi para pencinta literasi. Kami percaya bahwa setiap buku memiliki kekuatan untuk mengubah perspektif dan menginspirasi dunia.
+                JeBook adalah destinasi utama bagi para pencinta literasi. Kami percaya bahwa setiap buku memiliki kekuatan untuk mengubah perspektif dan menginspirasi dunia.
             </p>
         </div>
 

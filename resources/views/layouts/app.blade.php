@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'PustakaBiru - Toko Buku Online')</title>
-    <meta name="description" content="PustakaBiru - Toko buku online terpercaya dengan koleksi terlengkap">
+    <title>@yield('title', 'JeBook - Toko Buku Online')</title>
+    <meta name="description" content="JeBook - Toko buku online terpercaya dengan koleksi terlengkap">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -62,7 +62,7 @@
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="{{ route('home') }}" class="text-2xl font-bold text-primary flex items-center gap-2">
-                        <i class="fa-solid fa-book-open"></i> PustakaBiru
+                        <i class="fa-solid fa-book-open"></i> JeBook
                     </a>
                 </div>
 
@@ -171,7 +171,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <a href="{{ route('home') }}" class="text-2xl font-bold text-white flex items-center gap-2 mb-4">
-                        <i class="fa-solid fa-book-open"></i> PustakaBiru
+                        <i class="fa-solid fa-book-open"></i> JeBook
                     </a>
                     <p class="text-gray-400 text-sm">Menyediakan berbagai macam buku pilihan dengan harga terbaik dan kualitas original.</p>
                 </div>
@@ -204,7 +204,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-500">
-                &copy; {{ date('Y') }} PustakaBiru. All rights reserved.
+                &copy; {{ date('Y') }} JeBook. All rights reserved.
             </div>
         </div>
 

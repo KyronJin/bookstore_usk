@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    // Menampilkan antrean seluruh pesanan yang masuk beserta filternya
     public function index(Request $request)
     {
         $query = Order::with('user');
@@ -28,12 +29,14 @@ class OrderController extends Controller
         return view('admin.orders', compact('orders'));
     }
 
+    // Membuka halaman detail untuk satu pesanan spesifik (melihat bukti transfer, item buku)
     public function show(Order $order)
     {
         $order->load('user', 'items.book');
         return view('admin.order_detail', compact('order'));
     }
 
+    // Mengubah status progres dari pesanan (Pending -> Processing -> Shipped, dst.)
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([

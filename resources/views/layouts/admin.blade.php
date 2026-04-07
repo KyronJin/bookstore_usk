@@ -27,8 +27,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AlpineJS -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-100 flex flex-col md:flex-row min-h-screen font-sans" x-data="{ sidebarOpen: false }">
+
+    <!-- Flash Messages -->
+    @if(session('success'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+         class="fixed top-4 right-4 z-[999] bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3">
+        <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+        <button @click="show = false" class="ml-2 text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    @endif
+    @if(session('error'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+         class="fixed top-4 right-4 z-[999] bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
+        <button @click="show = false" class="ml-2 text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    @endif
 
     <!-- Mobile Sidebar Overlay -->
     <div x-show="sidebarOpen" class="fixed inset-0 z-20 bg-black bg-opacity-50 transition-opacity md:hidden" @click="sidebarOpen = false"></div>

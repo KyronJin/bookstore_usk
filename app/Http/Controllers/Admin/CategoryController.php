@@ -9,12 +9,14 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    // Menampilkan daftar seluruh kategori buku
     public function index()
     {
         $categories = Category::withCount('books')->latest()->get();
         return view('admin.categories', compact('categories'));
     }
 
+    // Menyimpan data kategori baru yang diinputkan admin
     public function store(Request $request)
     {
         $request->validate([
@@ -31,6 +33,7 @@ class CategoryController extends Controller
         return back()->with('success', 'Kategori "' . $request->name . '" berhasil ditambahkan.');
     }
 
+    // Memperbarui nama atau deskripsi dari sebuah kategori
     public function update(Request $request, Category $category)
     {
         $request->validate([
@@ -47,6 +50,7 @@ class CategoryController extends Controller
         return back()->with('success', 'Kategori berhasil diperbarui.');
     }
 
+    // Menghapus spesifik kategori (jika belum ada buku yang menggunakan kategori ini)
     public function destroy(Category $category)
     {
         if ($category->books()->count() > 0) {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login — PustakaBiru</title>
+    <title>Admin Login — JeBook</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -57,7 +57,7 @@
                     <i class="fa-solid fa-shield-halved text-3xl text-white"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-white">Admin Panel</h1>
-                <p class="text-blue-200 text-sm mt-1">PustakaBiru Administrator</p>
+                <p class="text-blue-200 text-sm mt-1">JeBook Administrator</p>
             </div>
 
             <!-- Form -->
@@ -86,7 +86,7 @@
                                    value="{{ old('email') }}"
                                    autocomplete="email"
                                    class="w-full bg-gray-800 border {{ $errors->has('email') ? 'border-red-500' : 'border-gray-700' }} text-white rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent placeholder-gray-600 transition"
-                                   placeholder="admin@pustakabiru.com">
+                                   placeholder="admin@JeBook.com">
                         </div>
                     </div>
 

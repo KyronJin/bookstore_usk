@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    // Menampilkan daftar semua pengguna/pelanggan yang mendaftar di web
     public function index(Request $request)
     {
         $query = User::where('role', 'user');
@@ -24,6 +25,7 @@ class UserController extends Controller
         return view('admin.users', compact('users'));
     }
 
+    // Menghapus akun pelanggan beserta rekaman riwayat pesanannya
     public function destroy(User $user)
     {
         if ($user->isAdmin()) {

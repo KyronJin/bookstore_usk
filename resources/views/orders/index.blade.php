@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pesanan Saya - PustakaBiru')
+@section('title', 'Pesanan Saya - JeBook')
 
 @section('content')
 <div class="bg-gray-50 py-12 min-h-screen">
@@ -21,7 +21,9 @@
             @foreach($orders as $order)
             @php
                 $colors = ['pending'=>'yellow','processing'=>'blue','shipped'=>'purple','delivered'=>'green','cancelled'=>'red'];
+                $icons = ['pending'=>'fa-clock','processing'=>'fa-box','shipped'=>'fa-truck-fast','delivered'=>'fa-circle-check','cancelled'=>'fa-circle-xmark'];
                 $color = $colors[$order->status] ?? 'gray';
+                $icon = $icons[$order->status] ?? 'fa-info-circle';
             @endphp
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <!-- Order Header -->
@@ -37,7 +39,7 @@
                         @elseif($color === 'green') bg-green-100 text-green-700
                         @elseif($color === 'red') bg-red-100 text-red-700
                         @else bg-gray-100 text-gray-700 @endif">
-                        {{ $order->status_label }}
+                        <i class="fa-solid {{ $icon }} mr-1.5"></i> {{ $order->status_label }}
                     </span>
                 </div>
 

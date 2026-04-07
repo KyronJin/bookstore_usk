@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout - PustakaBiru')
+@section('title', 'Checkout - JeBook')
 
 @section('content')
 <div class="bg-gray-50 py-12 min-h-screen">
@@ -82,7 +82,7 @@
                                         <span class="font-bold text-primary text-base select-all">098 7654 321</span>
                                     </li>
                                 </ul>
-                                <p class="text-xs text-gray-500 mt-3 font-semibold"><i class="fa-solid fa-circle-info mr-1 text-blue-500"></i>A.N. PustakaBiru Indonesia.</p>
+                                <p class="text-xs text-gray-500 mt-3 font-semibold"><i class="fa-solid fa-circle-info mr-1 text-blue-500"></i>A.N. JeBook Indonesia.</p>
                             </div>
                             
                             <!-- Input Detail Bank Pengirim -->

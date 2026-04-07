@@ -6,7 +6,7 @@
 <div class="space-y-6">
     <div>
         <h1 class="text-2xl font-bold text-dark">Data User</h1>
-        <p class="text-gray-500 text-sm mt-1">Daftar pengguna terdaftar di PustakaBiru</p>
+        <p class="text-gray-500 text-sm mt-1">Daftar pengguna terdaftar di JeBook</p>
     </div>
 
     <!-- Search -->
@@ -51,7 +51,7 @@
                         <td class="px-6 py-4 text-gray-500">{{ $user->created_at->format('d M Y') }}</td>
                         <td class="px-6 py-4 text-center">
                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST"
-                                  onsubmit="return confirm('Hapus user {{ $user->name }}? Semua data pesanannya akan ikut terhapus!')">
+                                  class="delete-form" data-name="{{ $user->name }}">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-xs font-medium transition">
                                     <i class="fa-solid fa-trash mr-1"></i> Hapus
@@ -72,4 +72,28 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = this.dataset.name;
+            Swal.fire({
+                title: 'Hapus User?',
+                text: "Apakah Anda yakin ingin menghapus user '" + name + "'? Semua data pesanannya juga akan ikut terhapus!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.submit();
+                }
+            });
+        });
+    });
+});
+</script>
 @endsection

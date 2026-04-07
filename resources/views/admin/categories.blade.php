@@ -31,7 +31,7 @@
                     <i class="fa-solid fa-pen mr-1"></i> Edit
                 </button>
                 <form action="{{ route('admin.categories.destroy', $category) }}" method="POST"
-                      onsubmit="return confirm('Hapus kategori {{ $category->name }}?')">
+                      class="delete-form" data-name="{{ $category->name }}">
                     @csrf @method('DELETE')
                     <button type="submit" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-sm font-medium transition">
                         <i class="fa-solid fa-trash"></i>
@@ -61,12 +61,12 @@
             @csrf
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kategori <span class="text-red-500">*</span></label>
-                <input type="text" name="name" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="Contoh: Fiksi">
-                @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                <input type="text" name="name" value="{{ old('_method') !== 'PUT' ? old('name') : '' }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="Contoh: Fiksi">
+                @if(old('_method') !== 'PUT') @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror @endif
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                <textarea name="description" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary resize-none" placeholder="Deskripsi singkat kategori ini..."></textarea>
+                <textarea name="description" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary resize-none" placeholder="Deskripsi singkat kategori ini...">{{ old('_method') !== 'PUT' ? old('description') : '' }}</textarea>
             </div>
             <div class="flex gap-3 pt-2">
                 <button type="button" onclick="document.getElementById('modal-add').classList.add('hidden')"
@@ -86,15 +86,17 @@
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
-        <form id="form-edit" action="" method="POST" class="p-6 space-y-4">
+        <form id="form-edit" action="{{ old('_method') === 'PUT' ? '/admin/categories/'.old('category_id') : '' }}" method="POST" class="p-6 space-y-4">
             @csrf @method('PUT')
+            <input type="hidden" name="category_id" id="edit-id" value="{{ old('category_id') }}">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kategori <span class="text-red-500">*</span></label>
-                <input type="text" id="edit-name" name="name" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary">
+                <input type="text" id="edit-name" name="name" value="{{ old('_method') === 'PUT' ? old('name') : '' }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary">
+                @if(old('_method') === 'PUT') @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror @endif
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                <textarea id="edit-description" name="description" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary resize-none"></textarea>
+                <textarea id="edit-description" name="description" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary resize-none">{{ old('_method') === 'PUT' ? old('description') : '' }}</textarea>
             </div>
             <div class="flex gap-3 pt-2">
                 <button type="button" onclick="document.getElementById('modal-edit').classList.add('hidden')"
@@ -108,9 +110,43 @@
 <script>
 function openEditModal(category) {
     document.getElementById('form-edit').action = '/admin/categories/' + category.id;
+    document.getElementById('edit-id').value = category.id;
     document.getElementById('edit-name').value = category.name;
     document.getElementById('edit-description').value = category.description || '';
     document.getElementById('modal-edit').classList.remove('hidden');
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Tampilkan modal otomatis jika ada error validasi
+    @if($errors->any())
+        @if(old('_method') === 'PUT')
+            document.getElementById('modal-edit').classList.remove('hidden');
+        @else
+            document.getElementById('modal-add').classList.remove('hidden');
+        @endif
+    @endif
+
+    // Konfirmasi hapus kategori menggunakan SweetAlert
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = this.dataset.name;
+            Swal.fire({
+                title: 'Hapus Kategori?',
+                text: "Apakah Anda yakin ingin menghapus kategori '" + name + "'?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.submit();
+                }
+            });
+        });
+    });
+});
 </script>
 @endsection
