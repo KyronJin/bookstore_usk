@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [CartController::class, 'placeOrder'])->name('checkout.place'); // Menyimpan pesanan dan bukti bayar ke database
     Route::get('/orders', [CartController::class, 'orders'])->name('orders.index'); // Menampilkan halaman daftar riwayat pesanan user
     Route::get('/orders/{order}/invoice', [CartController::class, 'invoice'])->name('orders.invoice'); // Mencetak invoice pesanan
+    Route::patch('/orders/{order}/cancel', [CartController::class, 'cancelOrder'])->name('orders.cancel'); // User membatalkan pesanannya sendiri
 });
 
 // =================== ADMIN AUTH ===================

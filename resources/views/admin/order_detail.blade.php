@@ -65,19 +65,26 @@
                         {{ $order->status_label }}
                     </span>
                 </p>
-                <form action="{{ route('admin.orders.status', $order) }}" method="POST" class="space-y-3">
-                    @csrf @method('PATCH')
-                    <select name="status" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary">
-                        <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Menunggu Konfirmasi</option>
-                        <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Sedang Diproses</option>
-                        <option value="shipped" {{ $order->status === 'shipped' ? 'selected' : '' }}>Sedang Dikirim</option>
-                        <option value="delivered" {{ $order->status === 'delivered' ? 'selected' : '' }}>Sudah Diterima</option>
-                        <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
-                    </select>
-                    <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-xl font-medium hover:bg-blue-800 transition">
-                        <i class="fa-solid fa-check mr-2"></i> Update Status
-                    </button>
-                </form>
+                @if($order->status === 'cancelled')
+                    <div class="bg-red-50 text-red-600 p-4 rounded-xl text-center text-sm font-medium border border-red-100">
+                        <i class="fa-solid fa-ban mx-auto text-2xl mb-2 block"></i>
+                        Pesanan ini telah dibatalkan dan tidak dapat diubah lagi.
+                    </div>
+                @else
+                    <form action="{{ route('admin.orders.status', $order) }}" method="POST" class="space-y-3">
+                        @csrf @method('PATCH')
+                        <select name="status" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary">
+                            <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Menunggu Konfirmasi</option>
+                            <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Sedang Diproses</option>
+                            <option value="shipped" {{ $order->status === 'shipped' ? 'selected' : '' }}>Sedang Dikirim</option>
+                            <option value="delivered" {{ $order->status === 'delivered' ? 'selected' : '' }}>Sudah Diterima</option>
+                            <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                        </select>
+                        <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-xl font-medium hover:bg-blue-800 transition">
+                            <i class="fa-solid fa-check mr-2"></i> Update Status
+                        </button>
+                    </form>
+                @endif
             </div>
 
             <!-- Customer Info -->
@@ -127,4 +134,19 @@
         </div>
     </div>
 </div>
+
+@if(session('stock_error'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal Memproses Pesanan',
+            text: "{!! session('stock_error') !!}",
+            confirmButtonColor: '#1E3A8A',
+            confirmButtonText: 'Tutup'
+        });
+    });
+</script>
+@endif
+
 @endsection

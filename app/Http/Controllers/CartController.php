@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CartController extends Controller
@@ -114,7 +115,21 @@ class CartController extends Controller
             return redirect()->route('cart.index')->with('warning', 'Pilih minimal satu buku untuk checkout.');
         }
 
-        $subtotal     = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $subtotal = 0;
+        // VALIDASI AWAL: Tarik harga terbaru dan cek stok untuk tampilan checkout
+        foreach ($cart as $key => &$item) {
+            $book = Book::find($item['book_id']);
+            if (!$book) {
+                 return redirect()->route('cart.index')->with('error', "Salah satu buku dalam pesanan Anda sudah tidak tersedia.");
+            }
+            if ($book->stock < $item['quantity']) {
+                return redirect()->route('cart.index')->with('error', "Stok buku '{$book->title}' tidak mencukupi. Sisa stok: {$book->stock}.");
+            }
+            // Update harga di session view ke harga real-time
+            $item['price'] = $book->price;
+            $subtotal += $book->price * $item['quantity'];
+        }
+
         $tax          = $subtotal * 0.12;
         $shippingCost = 0;
         $total        = $subtotal + $tax + $shippingCost;
@@ -145,41 +160,78 @@ class CartController extends Controller
             return redirect()->route('cart.index')->with('error', 'Tidak ada item yang dipilih untuk checkout.');
         }
 
-        $subtotal     = collect($checkoutCart)->sum(fn($item) => $item['price'] * $item['quantity']);
-        $tax          = $subtotal * 0.12;
-        $shippingCost = 0;
+        try {
+            DB::beginTransaction();
 
-        $order = Order::create([
-            'user_id'          => Auth::id(),
-            'order_code'       => 'PB-' . strtoupper(Str::random(8)),
-            'status'           => 'pending',
-            'total_price'      => $subtotal,
-            'tax'              => $tax,
-            'shipping_cost'    => $shippingCost,
-            'payment_method'   => $request->payment_method,
-            'transfer_bank_name' => $request->payment_method === 'transfer' ? $request->transfer_bank_name : null,
-            'transfer_account_name' => $request->payment_method === 'transfer' ? $request->transfer_account_name : null,
-            'shipping_address' => $request->shipping_address,
-            'notes'            => $request->notes,
-        ]);
+            $subtotal = 0;
+            $orderItemsData = [];
 
-        foreach ($checkoutCart as $key => $item) {
-            OrderItem::create([
-                'order_id'  => $order->id,
-                'book_id'   => $item['book_id'],
-                'quantity'  => $item['quantity'],
-                'price'     => $item['price'],
+            // 1. Validasi stok & harga riil secara ketat dari database
+            foreach ($checkoutCart as $key => $item) {
+                // Gunakan lockForUpdate untuk mencegah race-condition oleh user lain di saat milidetik yang sama
+                $book = Book::where('id', $item['book_id'])->lockForUpdate()->first();
+
+                if (!$book) {
+                    throw new \Exception("Buku '{$item['title']}' sudah tidak tersedia.");
+                }
+
+                if ($book->stock < $item['quantity']) {
+                    throw new \Exception("Stok buku '{$book->title}' tidak mencukupi (Sisa {$book->stock}). Ada pengguna lain yang mungkin baru saja membeli produk tersebut.");
+                }
+
+                // Jangan ambil harga dari session, melainkan harga fresh dari $book->price
+                $realPrice = $book->price;
+                $subtotal += $realPrice * $item['quantity'];
+
+                $orderItemsData[] = [
+                    'book_id'  => $book->id,
+                    'quantity' => $item['quantity'],
+                    'price'    => $realPrice,
+                    'cart_key' => $key
+                ];
+            }
+
+            $tax          = $subtotal * 0.12;
+            $shippingCost = 0;
+
+            // 2. Buat Tagihan Induk
+            $order = Order::create([
+                'user_id'          => Auth::id(),
+                'order_code'       => 'PB-' . strtoupper(Str::random(8)),
+                'status'           => 'pending',
+                'total_price'      => $subtotal,
+                'tax'              => $tax,
+                'shipping_cost'    => $shippingCost,
+                'payment_method'   => $request->payment_method,
+                'transfer_bank_name' => $request->payment_method === 'transfer' ? $request->transfer_bank_name : null,
+                'transfer_account_name' => $request->payment_method === 'transfer' ? $request->transfer_account_name : null,
+                'shipping_address' => $request->shipping_address,
+                'notes'            => $request->notes,
             ]);
 
-            // Kurangi stok buku
-            Book::where('id', $item['book_id'])->decrement('stock', $item['quantity']);
-            
-            // Hapus dari cart session
-            unset($cart[$key]);
-        }
+            // 3. Masukkan item dan bersihkan session
+            foreach ($orderItemsData as $data) {
+                OrderItem::create([
+                    'order_id'  => $order->id,
+                    'book_id'   => $data['book_id'],
+                    'quantity'  => $data['quantity'],
+                    'price'     => $data['price'],
+                ]);
+                
+                unset($cart[$data['cart_key']]);
+            }
 
-        // Update sisa cart
-        session()->put('cart', $cart);
+            // Jika semua di atas berjalan mulus, komitmen transaksi (permanent saving)
+            DB::commit();
+            
+            // Simpan sisa keranjang
+            session()->put('cart', $cart);
+
+        } catch (\Exception $e) {
+            // Jika ada ERROR STOK atau QUERY, batalkan semua pencatatan database!
+            DB::rollBack();
+            return redirect()->route('cart.index')->with('error', 'Pesanan dibatalkan: ' . $e->getMessage());
+        }
 
         $msg = $request->payment_method === 'transfer' 
             ? 'Pesanan dibuat. Harap tunggu admin memverifikasi pembayaran Anda (Pesanan: ' . $order->order_code . ')'
@@ -206,5 +258,22 @@ class CartController extends Controller
 
         $order->load(['items.book', 'user']);
         return view('orders.invoice', compact('order'));
+    }
+
+    // User membatalkan pesanan (Hanya jika pending)
+    public function cancelOrder(Order $order)
+    {
+        // Pastikan order milik user yang login
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        if ($order->status !== 'pending') {
+            return back()->with('error', 'Pesanan anda sudah diproses dan tidak dapat dibatalkan, silakan hubungi admin secara langsung.');
+        }
+
+        $order->update(['status' => 'cancelled']);
+
+        return back()->with('success', 'Pesanan ' . $order->order_code . ' berhasil dibatalkan.');
     }
 }

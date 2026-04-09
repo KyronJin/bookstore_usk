@@ -43,7 +43,43 @@ class OrderController extends Controller
             'status' => ['required', 'in:pending,processing,shipped,delivered,cancelled'],
         ]);
 
-        $order->update(['status' => $request->status]);
+        $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        if ($oldStatus === 'cancelled') {
+            return back()->with('error', 'Status pesanan yang sudah dibatalkan tidak dapat diubah lagi.');
+        }
+
+        // Jika berubah dari pending (stok belum dihitung) ke status proses/selesai, cek stok dulu
+        if ($oldStatus === 'pending' && in_array($newStatus, ['processing', 'shipped', 'delivered'])) {
+            // Cek terlebih dahulu apakah stok seluruh buku dalam tagihan ini mumpuni (tidak minus jika diproses)
+            foreach ($order->items as $item) {
+                if ($item->book && $item->book->stock < $item->quantity) {
+                    return back()->with('stock_error', "Stok buku '{$item->book->title}' saat ini tidak cukup (Sisa {$item->book->stock}). Anda harus merestock buku ini atau membatalkan pesanan terkait.");
+                }
+            }
+            
+            // Jika semua stok buku aman, sahkan status dan potong renteng
+            $order->update(['status' => $newStatus]);
+            foreach ($order->items as $item) {
+                if ($item->book) {
+                    $item->book->decrement('stock', $item->quantity);
+                }
+            }
+        } 
+        // Jika pesanan dibatalkan atau dikembalikan ke pending tapi stoknya sudah telanjur dikurangi sebelumnya, kembalikan stoknya
+        elseif (in_array($oldStatus, ['processing', 'shipped', 'delivered']) && in_array($newStatus, ['cancelled', 'pending'])) {
+            $order->update(['status' => $newStatus]);
+            foreach ($order->items as $item) {
+                if ($item->book) {
+                    $item->book->increment('stock', $item->quantity);
+                }
+            }
+        } 
+        else {
+            // Update status biasa (misal dari processing ke shipped) tanpa ubah stok
+            $order->update(['status' => $newStatus]);
+        }
 
         return back()->with('success', 'Status pesanan #' . $order->order_code . ' berhasil diubah menjadi "' . $order->status_label . '".');
     }

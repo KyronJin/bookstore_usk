@@ -65,9 +65,20 @@
 
                 <!-- Order Footer -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 py-3 bg-gray-50 border-t border-gray-100">
-                    <div class="text-sm text-gray-500">
-                        <span class="font-medium">Metode:</span>
-                        {{ $order->payment_method === 'cod' ? 'COD' : 'Transfer Bank' }}
+                    <div class="text-sm text-gray-500 flex items-center gap-4">
+                        <div>
+                            <span class="font-medium">Metode:</span>
+                            {{ $order->payment_method === 'cod' ? 'COD' : 'Transfer Bank' }}
+                        </div>
+                        
+                        @if($order->status === 'pending')
+                        <form action="{{ route('orders.cancel', $order) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan {{ $order->order_code }} ini secara permanen?');" class="inline-block">
+                            @csrf @method('PATCH')
+                            <button type="submit" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-2 py-1.5 rounded font-medium transition" title="Batalkan Pesanan">
+                                Batalkan
+                            </button>
+                        </form>
+                        @endif
                     </div>
                     <div class="mt-2 sm:mt-0 text-right">
                         <p class="text-xs text-gray-400">Total</p>
