@@ -11,6 +11,7 @@ class Order extends Model
         'order_code',
         'status',
         'total_price',
+        'tax',
         'shipping_cost',
         'payment_method',
         'shipping_address',
@@ -21,6 +22,7 @@ class Order extends Model
 
     protected $casts = [
         'total_price' => 'decimal:2',
+        'tax' => 'decimal:2',
         'shipping_cost' => 'decimal:2',
     ];
 
@@ -63,6 +65,6 @@ class Order extends Model
 
     public function getGrandTotalAttribute(): float
     {
-        return $this->total_price + $this->shipping_cost;
+        return $this->total_price + $this->tax + $this->shipping_cost;
     }
 }

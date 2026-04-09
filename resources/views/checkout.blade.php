@@ -3,96 +3,98 @@
 @section('title', 'Checkout - JeBook')
 
 @section('content')
-<div class="bg-gray-50 py-12 min-h-screen">
+<div class="bg-gray-50 py-10 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-dark mb-8"><i class="fa-solid fa-bag-shopping mr-2 text-secondary"></i>Checkout</h1>
+        <h1 class="text-2xl font-bold text-dark mb-6"><i class="fa-solid fa-bag-shopping mr-2 text-gray-400"></i>Checkout</h1>
 
         <form action="{{ route('checkout.place') }}" method="POST">
             @csrf
             <input type="hidden" name="items" value="{{ $selectedItemsStr }}">
-            <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex flex-col lg:flex-row gap-6">
                 <!-- Left: Form -->
-                <div class="lg:w-2/3 space-y-6">
+                <div class="lg:w-2/3 space-y-5">
 
                     <!-- Alamat Pengiriman -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h3 class="text-lg font-bold text-dark mb-4"><i class="fa-solid fa-location-dot mr-2 text-secondary"></i>Alamat Pengiriman</h3>
+                    <div class="bg-white rounded-lg border border-gray-200 p-5">
+                        <h3 class="font-bold text-dark mb-3 text-sm">Alamat Pengiriman</h3>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap <span class="text-red-500">*</span></label>
-                            <textarea name="shipping_address" rows="4" required
-                                      class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent resize-none {{ $errors->has('shipping_address') ? 'border-red-400' : '' }}"
-                                      placeholder="Contoh: Jl. Merdeka No. 10, RT 02/RW 05, Kelurahan Merdeka, Kecamatan Gambir, Jakarta Pusat 10110">{{ old('shipping_address', auth()->user()->address) }}</textarea>
+                            <label class="block text-sm text-gray-600 mb-1">Alamat Lengkap <span class="text-red-500">*</span></label>
+                            <textarea name="shipping_address" rows="3" required
+                                      class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-secondary focus:border-secondary resize-none {{ $errors->has('shipping_address') ? 'border-red-400' : '' }}"
+                                      placeholder="Contoh: Jl. Merdeka No. 10, RT 02/RW 05, Jakarta Pusat 10110">{{ old('shipping_address', auth()->user()->address) }}</textarea>
                             @error('shipping_address')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Catatan Pesanan <span class="text-gray-400">(opsional)</span></label>
+                        <div class="mt-3">
+                            <label class="block text-sm text-gray-600 mb-1">Catatan Pesanan <span class="text-gray-400">(opsional)</span></label>
                             <input type="text" name="notes"
-                                   class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+                                   class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-secondary"
                                    placeholder="Contoh: Tolong dibungkus rapi ya" value="{{ old('notes') }}">
                         </div>
                     </div>
 
                     <!-- Metode Pembayaran -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6" x-data="{ payment: 'cod' }">
-                        <h3 class="text-lg font-bold text-dark mb-4"><i class="fa-solid fa-credit-card mr-2 text-secondary"></i>Metode Pembayaran</h3>
+                    <div class="bg-white rounded-lg border border-gray-200 p-5" x-data="{ payment: 'cod' }">
+                        <h3 class="font-bold text-dark mb-3 text-sm">Metode Pembayaran</h3>
                         
-                        <div class="space-y-3">
+                        <div class="space-y-2">
                             <!-- COD Option -->
-                            <label class="relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all"
-                                   :class="payment === 'cod' ? 'border-green-400 bg-green-50' : 'border-gray-200 hover:bg-gray-50'">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer transition"
+                                   :class="payment === 'cod' ? 'border-primary bg-blue-50/50' : 'border-gray-200 hover:bg-gray-50'">
                                 <input type="radio" name="payment_method" value="cod" x-model="payment" class="sr-only">
-                                <div class="bg-green-100 rounded-xl p-3 mr-4 flex-shrink-0" :class="payment === 'cod' ? 'bg-green-100' : 'bg-gray-100'">
-                                    <i class="fa-solid fa-money-bill-wave text-xl" :class="payment === 'cod' ? 'text-green-600' : 'text-gray-400'"></i>
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center mr-3 flex-shrink-0"
+                                     :class="payment === 'cod' ? 'bg-primary/10' : 'bg-gray-100'">
+                                    <i class="fa-solid fa-money-bill-wave text-sm" :class="payment === 'cod' ? 'text-primary' : 'text-gray-400'"></i>
                                 </div>
                                 <div class="flex-grow">
-                                    <p class="font-bold text-dark">Bayar di Tempat (COD)</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Bayar tunai ketika buku sampai.</p>
+                                    <p class="font-medium text-sm text-dark">Bayar di Tempat (COD)</p>
+                                    <p class="text-xs text-gray-400">Bayar tunai ketika buku sampai.</p>
                                 </div>
-                                <i class="fa-solid fa-circle-check text-green-500 text-xl ml-auto" x-show="payment === 'cod'"></i>
+                                <i class="fa-solid fa-circle-check text-primary ml-auto" x-show="payment === 'cod'"></i>
                             </label>
 
                             <!-- Transfer Option -->
-                            <label class="relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all"
-                                   :class="payment === 'transfer' ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer transition"
+                                   :class="payment === 'transfer' ? 'border-primary bg-blue-50/50' : 'border-gray-200 hover:bg-gray-50'">
                                 <input type="radio" name="payment_method" value="transfer" x-model="payment" class="sr-only">
-                                <div class="rounded-xl p-3 mr-4 flex-shrink-0" :class="payment === 'transfer' ? 'bg-blue-100' : 'bg-gray-100'">
-                                    <i class="fa-solid fa-building-columns text-xl" :class="payment === 'transfer' ? 'text-blue-600' : 'text-gray-400'"></i>
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center mr-3 flex-shrink-0"
+                                     :class="payment === 'transfer' ? 'bg-primary/10' : 'bg-gray-100'">
+                                    <i class="fa-solid fa-building-columns text-sm" :class="payment === 'transfer' ? 'text-primary' : 'text-gray-400'"></i>
                                 </div>
                                 <div class="flex-grow">
-                                    <p class="font-bold text-dark">Transfer Bank</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Transfer manual (BCA, Mandiri).</p>
+                                    <p class="font-medium text-sm text-dark">Transfer Bank</p>
+                                    <p class="text-xs text-gray-400">Transfer manual (BCA, Mandiri).</p>
                                 </div>
-                                <i class="fa-solid fa-circle-check text-blue-500 text-xl ml-auto" x-show="payment === 'transfer'" style="display:none"></i>
+                                <i class="fa-solid fa-circle-check text-primary ml-auto" x-show="payment === 'transfer'" style="display:none"></i>
                             </label>
                         </div>
 
                         <!-- Bank Info Box (shown if transfer) -->
-                        <div x-show="payment === 'transfer'" x-transition class="mt-4 space-y-4" style="display:none">
-                            <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                                <p class="text-sm font-semibold text-dark mb-2">Tujuan Transfer (Rekening Toko):</p>
-                                <ul class="text-sm text-gray-700 space-y-2 font-mono">
-                                    <li class="flex justify-between items-center bg-white p-2 border border-gray-100 rounded shadow-sm">
-                                        <span class="font-sans font-bold">BCA</span>
-                                        <span class="font-bold text-primary text-base select-all">1234 5678 90</span>
+                        <div x-show="payment === 'transfer'" x-transition class="mt-4 space-y-3" style="display:none">
+                            <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                <p class="text-sm font-medium text-dark mb-2">Tujuan Transfer:</p>
+                                <ul class="text-sm text-gray-700 space-y-2">
+                                    <li class="flex justify-between items-center bg-white p-2 border border-gray-100 rounded">
+                                        <span class="font-medium text-sm">BCA</span>
+                                        <span class="font-semibold text-primary select-all">1234 5678 90</span>
                                     </li>
-                                    <li class="flex justify-between items-center bg-white p-2 border border-gray-100 rounded shadow-sm">
-                                        <span class="font-sans font-bold">Mandiri</span>
-                                        <span class="font-bold text-primary text-base select-all">098 7654 321</span>
+                                    <li class="flex justify-between items-center bg-white p-2 border border-gray-100 rounded">
+                                        <span class="font-medium text-sm">Mandiri</span>
+                                        <span class="font-semibold text-primary select-all">098 7654 321</span>
                                     </li>
                                 </ul>
-                                <p class="text-xs text-gray-500 mt-3 font-semibold"><i class="fa-solid fa-circle-info mr-1 text-blue-500"></i>A.N. JeBook Indonesia.</p>
+                                <p class="text-xs text-gray-400 mt-2">A.N. JeBook Indonesia.</p>
                             </div>
                             
                             <!-- Input Detail Bank Pengirim -->
-                            <div class="p-4 bg-white border border-gray-200 rounded-xl">
-                                <p class="text-sm font-semibold text-dark mb-3">Informasi Rekening Pengirim:</p>
+                            <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                                <p class="text-sm font-medium text-dark mb-3">Informasi Rekening Pengirim:</p>
                                 <div class="space-y-3">
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Nama Bank Asal <span class="text-red-500" x-show="payment === 'transfer'">*</span></label>
+                                        <label class="block text-xs text-gray-600 mb-1">Nama Bank Asal <span class="text-red-500" x-show="payment === 'transfer'">*</span></label>
                                         <select name="transfer_bank_name" x-bind:required="payment === 'transfer'"
-                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary bg-white">
+                                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-secondary bg-white">
                                             <option value="" disabled selected>-- Pilih Bank --</option>
                                             <option value="BCA" {{ old('transfer_bank_name') == 'BCA' ? 'selected' : '' }}>BCA</option>
                                             <option value="Mandiri" {{ old('transfer_bank_name') == 'Mandiri' ? 'selected' : '' }}>Mandiri</option>
@@ -109,9 +111,9 @@
                                         @enderror
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Nama Pemilik Rekening <span class="text-red-500" x-show="payment === 'transfer'">*</span></label>
+                                        <label class="block text-xs text-gray-600 mb-1">Nama Pemilik Rekening <span class="text-red-500" x-show="payment === 'transfer'">*</span></label>
                                         <input type="text" name="transfer_account_name" x-bind:required="payment === 'transfer'"
-                                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+                                               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-secondary"
                                                placeholder="Sesuai yang tertera di rekening" value="{{ old('transfer_account_name') }}">
                                         @error('transfer_account_name')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -123,19 +125,19 @@
                     </div>
 
                     <!-- Item Dipesan -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h3 class="text-lg font-bold text-dark mb-4"><i class="fa-solid fa-book mr-2 text-secondary"></i>Buku yang Dipesan</h3>
-                        <div class="space-y-4">
+                    <div class="bg-white rounded-lg border border-gray-200 p-5">
+                        <h3 class="font-bold text-dark mb-3 text-sm">Buku yang Dipesan</h3>
+                        <div class="space-y-3">
                             @foreach($cart as $item)
-                            <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-3">
                                 <img src="{{ $item['image_url'] ?: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=100' }}"
-                                     alt="{{ $item['title'] }}" class="w-14 h-18 object-cover rounded-lg shadow-sm flex-shrink-0">
+                                     alt="{{ $item['title'] }}" class="w-12 h-16 object-cover rounded-lg flex-shrink-0">
                                 <div class="flex-grow">
-                                    <p class="font-semibold text-dark text-sm">{{ $item['title'] }}</p>
-                                    <p class="text-xs text-gray-500">{{ $item['author'] }}</p>
-                                    <p class="text-xs text-gray-600 mt-1">{{ $item['quantity'] }} × Rp {{ number_format((float)$item['price'], 0, ',', '.') }}</p>
+                                    <p class="font-medium text-dark text-sm">{{ $item['title'] }}</p>
+                                    <p class="text-xs text-gray-400">{{ $item['author'] }}</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['quantity'] }} × Rp {{ number_format((float)$item['price'], 0, ',', '.') }}</p>
                                 </div>
-                                <span class="font-bold text-primary text-sm">Rp {{ number_format((float)$item['price'] * $item['quantity'], 0, ',', '.') }}</span>
+                                <span class="font-semibold text-primary text-sm">Rp {{ number_format((float)$item['price'] * $item['quantity'], 0, ',', '.') }}</span>
                             </div>
                             @endforeach
                         </div>
@@ -144,13 +146,17 @@
 
                 <!-- Right: Summary -->
                 <div class="lg:w-1/3">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
-                        <h3 class="text-lg font-bold text-dark mb-4">Ringkasan Pembayaran</h3>
+                    <div class="bg-white rounded-lg border border-gray-200 p-5 sticky top-24">
+                        <h3 class="font-bold text-dark mb-4">Ringkasan Pembayaran</h3>
 
-                        <div class="space-y-3 text-sm text-gray-600 border-b border-gray-100 pb-4 mb-4">
+                        <div class="space-y-2 text-sm text-gray-600 border-b border-gray-100 pb-4 mb-4">
                             <div class="flex justify-between">
                                 <span>Subtotal</span>
                                 <span class="font-medium">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Pajak (12%)</span>
+                                <span class="font-medium">Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span>Ongkos Kirim</span>
@@ -158,16 +164,16 @@
                             </div>
                         </div>
 
-                        <div class="flex justify-between items-center mb-6">
-                            <span class="font-bold text-dark">Total Pembayaran</span>
-                            <span class="text-2xl font-bold text-primary">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
+                        <div class="flex justify-between items-center mb-5">
+                            <span class="font-semibold text-dark text-sm">Total Pembayaran</span>
+                            <span class="text-xl font-bold text-primary">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
                         </div>
 
-                        <button type="submit" class="w-full bg-accent hover:bg-yellow-500 text-white font-bold py-4 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5">
-                            <i class="fa-solid fa-check-circle mr-2"></i> Buat Pesanan
+                        <button type="submit" class="w-full bg-primary hover:bg-blue-800 text-white font-medium py-3 px-4 rounded-lg transition text-sm">
+                            <i class="fa-solid fa-check-circle mr-1.5"></i> Buat Pesanan
                         </button>
 
-                        <a href="{{ route('cart.index') }}" class="block text-center mt-4 text-sm text-gray-500 hover:text-gray-700 transition">
+                        <a href="{{ route('cart.index') }}" class="block text-center mt-3 text-sm text-gray-400 hover:text-gray-600 transition">
                             <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Keranjang
                         </a>
                     </div>

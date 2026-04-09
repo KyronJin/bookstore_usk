@@ -47,4 +47,11 @@ class OrderController extends Controller
 
         return back()->with('success', 'Status pesanan #' . $order->order_code . ' berhasil diubah menjadi "' . $order->status_label . '".');
     }
+
+    // Mencetak invoice pesanan
+    public function invoice(Order $order)
+    {
+        $order->load(['items.book', 'user']);
+        return view('orders.invoice', compact('order'));
+    }
 }

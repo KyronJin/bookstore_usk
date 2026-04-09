@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout'); // Menampilkan halaman ringkasan checkout
     Route::post('/checkout', [CartController::class, 'placeOrder'])->name('checkout.place'); // Menyimpan pesanan dan bukti bayar ke database
     Route::get('/orders', [CartController::class, 'orders'])->name('orders.index'); // Menampilkan halaman daftar riwayat pesanan user
+    Route::get('/orders/{order}/invoice', [CartController::class, 'invoice'])->name('orders.invoice'); // Mencetak invoice pesanan
 });
 
 // =================== ADMIN AUTH ===================
@@ -81,6 +82,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index'); // Menampilkan seluruh antrean tagihan/pesanan pelanggan
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); // Melihat rincian spesifik dan bukti transfer pesanan
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status'); // Mengubah progres status pesanan (misal: 'Dikemas')
+    Route::get('/orders/{order}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice'); // Mencetak invoice pesanan admin
 
     // FITUR: Kotak Masuk (Pesan Kontak)
     Route::get('/contacts', [AdminContactController::class, 'index'])->name('contacts.index'); // Membaca kotak masuk pertanyaan dari halaman 'Contact Us'

@@ -12,6 +12,11 @@
             <h1 class="text-2xl font-bold text-dark">Detail Pesanan</h1>
             <p class="text-gray-500 text-sm font-mono">{{ $order->order_code }}</p>
         </div>
+        <div class="ml-auto">
+            <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center transition shadow-sm">
+                <i class="fa-solid fa-print mr-2"></i> Cetak Invoice
+            </a>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -33,6 +38,7 @@
                 @endforeach
                 <div class="p-5 bg-gray-50 space-y-2 text-sm">
                     <div class="flex justify-between text-gray-600"><span>Subtotal</span><span>Rp {{ number_format((float)$order->total_price, 0, ',', '.') }}</span></div>
+                    <div class="flex justify-between text-gray-600"><span>Pajak (12%)</span><span>Rp {{ number_format((float)$order->tax, 0, ',', '.') }}</span></div>
                     <div class="flex justify-between text-gray-600"><span>Ongkos Kirim</span><span>Rp {{ number_format((float)$order->shipping_cost, 0, ',', '.') }}</span></div>
                     <div class="flex justify-between font-bold text-dark text-base border-t border-gray-200 pt-2">
                         <span>Total Pembayaran</span>

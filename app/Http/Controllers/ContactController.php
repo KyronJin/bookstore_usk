@@ -17,10 +17,11 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'    => ['required', 'string', 'max:255'],
-            'email'   => ['required', 'email', 'max:255'],
-            'subject' => ['required', 'string', 'max:255'],
-            'message' => ['required', 'string'],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'max:255'],
+            'whatsapp' => ['nullable', 'string', 'regex:/^[\d\+\-\s]+$/', 'max:20'],
+            'subject'  => ['required', 'string', 'max:255'],
+            'message'  => ['required', 'string'],
         ]);
 
         Contact::create($request->all());

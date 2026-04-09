@@ -115,12 +115,13 @@ class CartController extends Controller
         }
 
         $subtotal     = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-        $shippingCost = 20000;
-        $total        = $subtotal + $shippingCost;
+        $tax          = $subtotal * 0.12;
+        $shippingCost = 0;
+        $total        = $subtotal + $tax + $shippingCost;
 
         $selectedItemsStr = implode(',', array_keys($cart));
 
-        return view('checkout', compact('cart', 'subtotal', 'shippingCost', 'total', 'selectedItemsStr'));
+        return view('checkout', compact('cart', 'subtotal', 'tax', 'shippingCost', 'total', 'selectedItemsStr'));
     }
 
     // Proses pembuatan pesanan
@@ -145,13 +146,15 @@ class CartController extends Controller
         }
 
         $subtotal     = collect($checkoutCart)->sum(fn($item) => $item['price'] * $item['quantity']);
-        $shippingCost = 20000;
+        $tax          = $subtotal * 0.12;
+        $shippingCost = 0;
 
         $order = Order::create([
             'user_id'          => Auth::id(),
             'order_code'       => 'PB-' . strtoupper(Str::random(8)),
             'status'           => 'pending',
             'total_price'      => $subtotal,
+            'tax'              => $tax,
             'shipping_cost'    => $shippingCost,
             'payment_method'   => $request->payment_method,
             'transfer_bank_name' => $request->payment_method === 'transfer' ? $request->transfer_bank_name : null,
@@ -191,5 +194,17 @@ class CartController extends Controller
     {
         $orders = Auth::user()->orders()->with('items.book')->latest()->get();
         return view('orders.index', compact('orders'));
+    }
+
+    // Tampilkan invoice
+    public function invoice(Order $order)
+    {
+        // Pastikan order milik user yang login
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        $order->load(['items.book', 'user']);
+        return view('orders.invoice', compact('order'));
     }
 }
